@@ -1,9 +1,12 @@
-from google.colab import files 
+
+from google.colab import files
 uploaded = files.upload()
- import pandas as pd 
-# Read the dataset 
+
+import pandas as pd
+# Read the dataset
 df = pd.read_csv('/content/House price.csv.csv', sep=';')
- import pandas as pd
+
+import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -113,39 +116,36 @@ plt.title('price by Overall Quality')
 plt.xlabel('size')
 plt.ylabel('price')
 plt.show()
+
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# Load your dataset
+# Load the dataset
 df = pd.read_csv('/content/House price.csv.csv')
 
-# Set plot style
-sns.set(style="whitegrid")
+# Identify the target variable
+target = 'price'
+y = df[target]
 
-# Plot 1: Distribution of SalePrice
+# Option 1: Select numerical features with high correlation to target
+correlation = df.corr(numeric_only=True)[target].sort_values(ascending=False)
+print("Top correlated features with SalePrice:\n", correlation.head(10))
+
+# Choose top correlated features (excluding the target itself)
+top_features = correlation.index[1:6] # Adjust the range as needed
+X = df[top_features]
+
+# Print selected features
+print("\nSelected features for regression:")
+print(top_features.tolist())
+
+# Optional: Visualize feature correlation with target
 plt.figure(figsize=(8, 5))
-sns.histplot(df['price'], kde=True, color='blue')
-plt.title('Distribution of price')
-plt.xlabel('price')
-plt.ylabel('Frequency')
+sns.heatmap(df[top_features.tolist() + [target]].corr(), annot=True, cmap='coolwarm')
+plt.title('Correlation Heatmap of Selected Features')
 plt.show()
 
-# Plot 2: SalePrice vs GrLivArea (above ground living area)
-plt.figure(figsize=(8, 5))
-sns.scatterplot(x='size', y='price', data=df, alpha=0.5)
-plt.title('price vs size')
-plt.xlabel('size')
-plt.ylabel('price')
-plt.show()
-
-# Plot 3: Boxplot of SalePrice by OverallQual (overall material and finish quality)
-plt.figure(figsize=(8, 5))
-sns.boxplot(x='size', y='price', data=df)
-plt.title('price by Overall Quality')
-plt.xlabel('size')
-plt.ylabel('price')
-plt.show()
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
@@ -171,6 +171,7 @@ df = pd.get_dummies(df, columns=one_hot_cols, drop_first=True)
 # 4. Check the transformed dataset
 print("\nDataset shape after encoding:", df.shape)
 print(df.head())
+
 import pandas as pd
 
 # Load dataset
@@ -186,6 +187,7 @@ df_encoded = pd.get_dummies(df, columns=categorical_cols, drop_first=True)
 # Check result
 print("Dataset shape after One-Hot Encoding:", df_encoded.shape)
 print(df_encoded.head())
+
 import pandas as pd
 import joblib
 import gradio as gr
@@ -227,3 +229,4 @@ gr.Interface(
     title="House Price Predictor",3
     description="Enter the details of the house to predict its price."
 ).launch()
+
